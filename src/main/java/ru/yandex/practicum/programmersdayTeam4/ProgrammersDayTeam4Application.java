@@ -13,7 +13,7 @@ public class ProgrammersDayTeam4Application {
         ApplicationContext context = ApplicationContextProvider.getApplicationContext();
 
         //makeTask1(context);
-        makeTask2(context);
+        //makeTask2(context);
     }
 
     private static void makeTask1(ApplicationContext context) {
