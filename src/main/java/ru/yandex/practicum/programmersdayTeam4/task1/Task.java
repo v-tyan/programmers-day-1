@@ -1,9 +1,12 @@
 package ru.yandex.practicum.programmersdayTeam4.task1;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.TextNode;
 import ru.yandex.practicum.programmersdayTeam4.client.BaseClient;
 
 import java.io.IOError;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.yandex.practicum.programmersdayTeam4.model.Answer2;
+import ru.yandex.practicum.programmersdayTeam4.model.In2;
 
 @Service
 public class Task extends BaseClient {
@@ -27,6 +31,8 @@ public class Task extends BaseClient {
     private static final String SERVER_URL = "http://ya.praktikum.fvds.ru:8080";
     private static final Integer MAIN_ANSWER = 42;
     private static final String TOKEN = "9b5e46cb-22f9-4e62-8277-e6fe02c96faf";
+
+    private final Gson gson = getGson();
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -91,18 +97,19 @@ public class Task extends BaseClient {
 */
 
 
-
-
         Connection connection = Jsoup.connect("http://ya.praktikum.fvds.ru:8080/dev-day/task/2");
         connection.header("AUTH_TOKEN", TOKEN);
 
         try {
             Document docCustomConn = connection.get();
-            Element text = docCustomConn.getElementById("message");
+            Element text = docCustomConn.getElementsByTag("code").first().getElementsByTag("span").first();
+            String inString = text.textNodes().get(0).toString();
 
-            ////// todo
-            encoded = text.getElementsByAttribute("encoded").toString();
-            offset = Integer.parseInt(text.getElementsByAttribute("offset").toString());
+            In2 in2=  gson.fromJson(inString, In2.class);
+
+
+            encoded = in2.getEncoded();
+            offset = in2.getOffset();
         } catch (IOException e) {
 
         }
@@ -153,6 +160,11 @@ public class Task extends BaseClient {
             }
         }
         return result.toString();
+    }
+
+    private static Gson getGson() {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        return gsonBuilder.create();
     }
 
 }
