@@ -1,6 +1,6 @@
 package ru.yandex.practicum.programmersdayTeam4;
 
-import ru.yandex.practicum.programmersdayTeam4.task1.Task;
+import ru.yandex.practicum.programmersdayTeam4.task.Task;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;

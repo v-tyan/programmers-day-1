@@ -2,7 +2,7 @@ package ru.yandex.practicum.programmersdayTeam4;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.programmersdayTeam4.task1.Task;
+import ru.yandex.practicum.programmersdayTeam4.task.Task;
 import lombok.RequiredArgsConstructor;
 
 @RestController

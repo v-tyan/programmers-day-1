@@ -1,4 +1,4 @@
-package ru.yandex.practicum.programmersdayTeam4.task1;
+package ru.yandex.practicum.programmersdayTeam4.task;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -6,10 +6,8 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.TextNode;
 import ru.yandex.practicum.programmersdayTeam4.client.BaseClient;
 
-import java.io.IOError;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -163,9 +161,9 @@ public class Task extends BaseClient {
             } catch (HttpStatusCodeException e) {
                 in3 = gson.fromJson(e.getMessage().toString(), In3.class);
                 if (in3.getPrompt().equals("<pass")) {
-                    mid = right;
+                    right = mid;
                 } else if (in3.getPrompt().equals(">pass")) {
-                    mid = left;
+                    left = mid;
                 }
 
             }
