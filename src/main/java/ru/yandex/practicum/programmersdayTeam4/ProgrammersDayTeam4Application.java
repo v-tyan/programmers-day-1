@@ -14,6 +14,7 @@ public class ProgrammersDayTeam4Application {
 
         //makeTask1(context);
         //makeTask2(context);
+        //makeTask3(context);
     }
 
     private static void makeTask1(ApplicationContext context) {
@@ -23,7 +24,12 @@ public class ProgrammersDayTeam4Application {
 
     private static void makeTask2(ApplicationContext context) {
         Task task1 = context.getBean(Task.class);
-        System.out.println(task1.getTask2());
+        System.out.println(task1.postTask2());
+    }
+
+    private static void makeTask3(ApplicationContext context) {
+        Task task1 = context.getBean(Task.class);
+        System.out.println(task1.postTask3());
     }
 
 }

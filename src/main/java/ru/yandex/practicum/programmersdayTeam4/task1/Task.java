@@ -28,6 +28,7 @@ import ru.yandex.practicum.programmersdayTeam4.model.In2;
 public class Task extends BaseClient {
     private static final String API_PREFIX_TASK1 = "/dev-day/register";
     private static final String API_PREFIX_TASK2 = "/dev-day/task/2";
+    private static final String API_PREFIX_TASK3 = "/dev-day/task/3";
     private static final String SERVER_URL = "http://ya.praktikum.fvds.ru:8080";
     private static final Integer MAIN_ANSWER = 42;
     private static final String TOKEN = "9b5e46cb-22f9-4e62-8277-e6fe02c96faf";
@@ -45,7 +46,7 @@ public class Task extends BaseClient {
     public Task(RestTemplateBuilder builder) {
         super(
                 builder
-                        .uriTemplateHandler(new DefaultUriBuilderFactory(SERVER_URL + API_PREFIX_TASK2))
+                        .uriTemplateHandler(new DefaultUriBuilderFactory(SERVER_URL))
                         .requestFactory(HttpComponentsClientHttpRequestFactory::new)
                         .build()
         );
@@ -61,7 +62,7 @@ public class Task extends BaseClient {
 
         ResponseEntity<Object> serverResponse;
         try {
-            serverResponse = rest.exchange("", HttpMethod.POST, requestEntity, Object.class);
+            serverResponse = rest.exchange(API_PREFIX_TASK1, HttpMethod.POST, requestEntity, Object.class);
         } catch (HttpStatusCodeException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
         }
@@ -75,29 +76,11 @@ public class Task extends BaseClient {
         return responseBuilder.build();
     }
 
-    public ResponseEntity<Object> getTask2() {
+    public ResponseEntity<Object> postTask2() {
         String encoded = "";
         int offset = 0;
 
-       /* HttpHeaders headers1 = new HttpHeaders();
-        headers1.setContentType(MediaType.TEXT_HTML);
-        headers1.set("AUTH_TOKEN", String.valueOf(TOKEN));
-        HttpEntity<Object> requestEntity1 = new HttpEntity<>("", headers1);
-
-        ResponseEntity<String> serverResponse1;
-        try {
-            try {
-                serverResponse1 = rest.exchange("", HttpMethod.GET, requestEntity1, String.class);
-            } catch (HttpStatusCodeException e) {
-                return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
-            }
-        } catch (HttpStatusCodeException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
-        }
-*/
-
-
-        Connection connection = Jsoup.connect("http://ya.praktikum.fvds.ru:8080/dev-day/task/2");
+        Connection connection = Jsoup.connect(SERVER_URL + API_PREFIX_TASK2);
         connection.header("AUTH_TOKEN", TOKEN);
 
         try {
@@ -105,7 +88,7 @@ public class Task extends BaseClient {
             Element text = docCustomConn.getElementsByTag("code").first().getElementsByTag("span").first();
             String inString = text.textNodes().get(0).toString();
 
-            In2 in2=  gson.fromJson(inString, In2.class);
+            In2 in2 = gson.fromJson(inString, In2.class);
 
 
             encoded = in2.getEncoded();
@@ -119,6 +102,7 @@ public class Task extends BaseClient {
         Answer2 answer = new Answer2();
         answer.setDecoded(answerString);
 
+        // ответ
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -129,7 +113,78 @@ public class Task extends BaseClient {
 
         ResponseEntity<Object> serverResponse;
         try {
-            serverResponse = rest.exchange("", HttpMethod.POST, requestEntity, Object.class);
+            serverResponse = rest.exchange(API_PREFIX_TASK2, HttpMethod.POST, requestEntity, Object.class);
+        } catch (HttpStatusCodeException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
+        }
+
+        ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.status(serverResponse.getStatusCode());
+
+        if (serverResponse.hasBody()) {
+            return responseBuilder.body(serverResponse.getBody());
+        }
+
+        return responseBuilder.build();
+    }
+
+    public ResponseEntity<Object> postTask3() {
+        String encoded = "";
+        int offset = 0;
+
+       /* HttpHeaders headers1 = new HttpHeaders();
+        //headers1.setContentType(MediaType.TEXT_HTML);
+        //headers1.setContentType(MediaType.APPLICATION_JSON);
+        //headers1.setAccept(List.of(MediaType.APPLICATION_JSON));
+        headers1.set("AUTH_TOKEN", String.valueOf(TOKEN));
+        HttpEntity<Object> requestEntity1 = new HttpEntity<>("", headers1);
+
+        ResponseEntity<String> serverResponse1;
+        try {
+            try {
+                serverResponse1 = rest.exchange(API_PREFIX_TASK3, HttpMethod.GET, requestEntity1, String.class);
+            } catch (HttpStatusCodeException e) {
+                return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
+            }
+        } catch (HttpStatusCodeException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
+        }
+*/
+
+
+        Connection connection = Jsoup.connect(SERVER_URL + API_PREFIX_TASK3);
+        connection.header("AUTH_TOKEN", TOKEN);
+
+        try {
+            Document docCustomConn = connection.get();
+            Element text = docCustomConn.getElementsByTag("code").first().getElementsByTag("span").first();
+            String inString = text.textNodes().get(0).toString();
+
+            In2 in2 = gson.fromJson(inString, In2.class);
+
+
+            encoded = in2.getEncoded();
+            offset = in2.getOffset();
+        } catch (IOException e) {
+
+        }
+
+       // String answerString = decode(encoded, offset);
+
+        //Answer2 answer = new Answer2();
+        //answer.setDecoded(answerString);
+
+        // ответ
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+        headers.set("AUTH_TOKEN", TOKEN);
+
+        HttpEntity<Object> requestEntity = new HttpEntity<>(answer, headers);
+
+        ResponseEntity<Object> serverResponse;
+        try {
+            serverResponse = rest.exchange(API_PREFIX_TASK3, HttpMethod.POST, requestEntity, Object.class);
         } catch (HttpStatusCodeException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
         }
