@@ -204,7 +204,7 @@ public class Task extends BaseClient {
 
         for (Map.Entry<String, Charset> everyCharset : charsets.entrySet()) {
 
-            //System.out.println(everyCharset.getKey());
+            System.out.println(everyCharset.getKey());
             /*if (everyCharset.getKey().equals("ISO-2022-CN") || (everyCharset.getKey().equals("x-JISAutoDetect"))) {
                 continue;
             }*/
