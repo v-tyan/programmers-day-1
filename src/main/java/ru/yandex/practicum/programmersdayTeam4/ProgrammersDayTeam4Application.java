@@ -15,7 +15,7 @@ public class ProgrammersDayTeam4Application {
         //makeTask1(context);
         //makeTask2(context);
         //makeTask3(context);
-        makeTask4(context);
+        //makeTask4(context);
     }
 
     private static void makeTask1(ApplicationContext context) {

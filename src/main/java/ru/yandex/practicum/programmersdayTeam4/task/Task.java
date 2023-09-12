@@ -132,9 +132,6 @@ public class Task extends BaseClient {
     }
 
     public ResponseEntity<Object> postTask3() {
-        //String aaaaa = decode4("");
-
-
         long left = 0;
         long right = Long.parseLong("FFFFFFFF", 16);
         long mid;
@@ -171,7 +168,7 @@ public class Task extends BaseClient {
                 } else if (in3.getPrompt().equals(">pass")) {
                     left = mid;
                 }
-
+                continue;
             }
         }
         return ResponseEntity.of(Optional.of(in3));
@@ -180,7 +177,6 @@ public class Task extends BaseClient {
     public ResponseEntity<Object> postTask4() {
         String message = "";
         SortedMap<String, Charset> charsets = Charset.availableCharsets();//список доступных кодировок
-        Charset currentCharset = Charset.defaultCharset();//узнать текущую кодировку
         Charset windows1251 = Charset.forName("Windows-1251");
         Charset utf8 = Charset.forName("UTF-8");
         String resultString = "";
@@ -190,68 +186,52 @@ public class Task extends BaseClient {
 
         try {
             Document docCustomConn = connection.get();
-            //Element text = docCustomConn.getElementsByTag("id").first().getElementsByTag("span").first();
-
-            //String inString = text.textNodes().get(0).toString();
             String inString = docCustomConn.select("#congratulation").first().text();
-            //In4 in4 = gson.fromJson(inString, In4.class);
-
-            //message = in4.getMessage();
             message = inString;
         } catch (IOException e) {
         }
 
 
-        for (Map.Entry<String, Charset> everyCharset : charsets.entrySet()) {
+        // for (Map.Entry<String, Charset> everyCharset : charsets.entrySet()) {
+        //        System.out.println(everyCharset.getKey());
+        try {
+            byte[] buffer = message.getBytes(Charset.forName("KOI8-R"));
+            // byte[] buffer = message.getBytes(Charset.forName("IBM866"));
+            // byte[] buffer = message.getBytes(everyCharset.getValue());//создать массив байт в любой известной Java кодировке
+            String s1 = new String(buffer, windows1251);//преобразовать набор байт, прочитанных из файла в строку
+            resultString = s1;
+            System.out.println(resultString);
+            Answer4 answer4 = new Answer4();
+            answer4.setCongratulation(resultString);
 
-            System.out.println(everyCharset.getKey());
-            /*if (everyCharset.getKey().equals("ISO-2022-CN") || (everyCharset.getKey().equals("x-JISAutoDetect"))) {
-                continue;
-            }*/
+            // ответ
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("AUTH_TOKEN", TOKEN);
+
+            HttpEntity<Object> requestEntity = new HttpEntity<>(answer4, headers);
+
+            ResponseEntity<Object> serverResponse;
             try {
-                //byte[] buffer = message.getBytes(Charset.forName("IBM866"));
-                byte[] buffer = message.getBytes(everyCharset.getValue());//создать массив байт в любой известной Java кодировке
-                String s1 = new String(buffer, windows1251);//преобразовать набор байт, прочитанных из файла в строку
-                resultString = s1;
-                System.out.println(resultString);
+                serverResponse = rest.exchange(API_PREFIX_TASK4, HttpMethod.POST, requestEntity, Object.class);
+                ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.status(serverResponse.getStatusCode());
 
-                Answer4 answer4 = new Answer4();
-                answer4.setCongratulation(resultString);
-
-                // ответ
-
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.APPLICATION_JSON);
-                //headers.setAccept(List.of(MediaType.APPLICATION_JSON));
-                headers.set("AUTH_TOKEN", TOKEN);
-
-                HttpEntity<Object> requestEntity = new HttpEntity<>(answer4, headers);
-
-                ResponseEntity<Object> serverResponse;
-                try {
-                    serverResponse = rest.exchange(API_PREFIX_TASK3, HttpMethod.POST, requestEntity, Object.class);
-                    ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.status(serverResponse.getStatusCode());
-
-                    responseBuilder.body(serverResponse.getBody());
-                    return responseBuilder.build();
-                } catch (HttpStatusCodeException e) {
-                    continue;
-
-                }
-
-
-            } catch (UnsupportedOperationException e) {
-                continue;
+                responseBuilder.body(serverResponse.getBody());
+                return responseBuilder.build();
+            } catch (HttpStatusCodeException e) {
+                //continue;
             }
 
+        } catch (UnsupportedOperationException e) {
+            //  continue;
         }
+
+        //   }
 
 
         return ResponseEntity.of(Optional.empty());
-
-
     }
-
 
     private String decode(String message, int offset) {
         //message = "VOJS O DSFTSQH DVD QCRWBU ROM";
@@ -270,36 +250,6 @@ public class Task extends BaseClient {
         }
         return result.toString();
     }
-
-    private String decode4(String message) {
-        message = "оНГДПЮБКЪЕЛ СЛЕКСЧ ЙНЛЮМДС Я дМЕЛ МЮЯРНЪЫЕЦН оПНЦПЮЛЛХЯРЮ";
-
-        SortedMap<String, Charset> charsets = Charset.availableCharsets();//список доступных кодировок
-
-        Charset currentCharset = Charset.defaultCharset();//узнать текущую кодировку
-        Charset windows1251 = Charset.forName("Windows-1251");
-        Charset utf8 = Charset.forName("UTF-8");
-
-        String resultString = "";
-        for (Map.Entry<String, Charset> everyCharset : charsets.entrySet()) {
-            System.out.println(everyCharset.getKey());
-            /*if (everyCharset.getKey().equals("ISO-2022-CN") || (everyCharset.getKey().equals("x-JISAutoDetect"))) {
-                continue;
-            }*/
-            try {
-
-                byte[] buffer = message.getBytes(everyCharset.getValue());//создать массив байт в любой известной Java кодировке
-
-                String s1 = new String(buffer, windows1251);//преобразовать набор байт, прочитанных из файла в строку
-                resultString = s1;
-                System.out.println(resultString);
-            } catch (UnsupportedOperationException i) {
-                continue;
-            }
-        }
-        return resultString;
-    }
-
 
     private static Gson getGson() {
         GsonBuilder gsonBuilder = new GsonBuilder();
